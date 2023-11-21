@@ -34,6 +34,13 @@ new class extends Component
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')" wire:navigate>
                         {{ __('Dashboard') }}
                     </x-nav-link>
+                    <x-nav-link :href="route('chat')" :active="request()->routeIs('chat')" wire:navigate>
+                        {{ __('Чат') }}
+                    </x-nav-link>
+                    <x-nav-link :href="route('users')" :active="request()->routeIs('users')" wire:navigate>
+                        {{ __('Создать чат') }}
+                    </x-nav-link>
+
                 </div>
             </div>
 
@@ -109,3 +116,10 @@ new class extends Component
         </div>
     </div>
 </nav>
+@if (isset($header))
+    <header class="bg-white shadow">
+        <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+            {{ $header }}
+        </div>
+    </header>
+@endif
