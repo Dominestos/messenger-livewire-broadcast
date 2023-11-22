@@ -25,6 +25,7 @@ class Chatlist extends Component
 
 
         $this->dispatch("loadChat", $chat, $receiverId)->to(Chatbox::class);
+        $this->dispatch("updateSendMessage", $chat, $receiverId)->to(SendMessage::class);
 
     }
 

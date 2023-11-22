@@ -22,6 +22,11 @@ class Message extends Model
         return $this->belongsTo(Chat::class, 'chat_id', 'id');
     }
 
+    public function attachments()
+    {
+        return $this->hasMany(Attachment::class);
+    }
+
     protected static function boot()
     {
         parent::boot();
