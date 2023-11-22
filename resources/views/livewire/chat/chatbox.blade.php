@@ -26,49 +26,66 @@
             @php
                 $prevMessageUserId = false;
             @endphp
-            @forelse($messages as $message)
-                @if($loop->first || $message->user_id !== $prevMessageUserId)
-                    @if(!$loop->first)
-                        </div>
+            @forelse ($messages as $message)
+                @if ($loop->first || $message->user_id !== $prevMessageUserId)
+                    @if (!$loop->first)
                     </div>
-                    @endif
+                    </div>
+                   @endif
 
-                    <p class="p-4 text-center text-sm text-gray-500">{{ $message->updated_at->format('d.m h:i') }}</p>
+    <p class="p-4 text-center text-sm text-gray-500">{{ $message->updated_at->format('d.m h:i') }}</p>
 
-                    @if ($message->user_id === auth()->user()->id)
-                        <div class="flex flex-row justify-end">
-                            <div class="messages text-sm text-white grid grid-flow-row gap-2">
-                    @else
-                        <div class="flex flex-row justify-start">
-                            <div class="w-8 h-8 relative flex flex-shrink-0 mr-4">
-                                <img class="shadow-md rounded-full w-full h-full object-cover"
-                                     src="https://ui-avatars.com/api/?background=random&name={{ $message->user->name }}"
-                                     alt=""
-                                />
-                            </div>
-                            <div class="messages text-sm text-gray-700 grid grid-flow-row gap-2">
-                    @endif
+    <div class="{{ $message->user_id === auth()->user()->id ? 'flex flex-row justify-end' : 'flex flex-row justify-start' }}">
+        @if ($message->user_id !== auth()->user()->id)
+            <div class="w-8 h-8 relative flex flex-shrink-0 mr-4">
+                <img class="shadow-md rounded-full w-full h-full object-cover"
+                     src="https://ui-avatars.com/api/?background=random&name={{ $message->user->name }}"
+                     alt=""
+                />
+            </div>
+        @endif
 
-                    @php
-                        $prevChatUserId = $message->user_id;
-                    @endphp
-                @endif
-                <div class="flex items-center group {{ $message->user->id === auth()->user()->id ? 'flex-row-reverse' : '' }}">
-                    <p class="{{ $message->user->id === auth()->user()->id ? 'px-6 py-3 rounded-l-full bg-blue-700 max-w-xs lg:max-w-md' : 'px-6 py-3 rounded-t-full rounded-r-full bg-gray-800 max-w-xs lg:max-w-md text-gray-200' }}">
+        <div class="messages text-sm {{ $message->user_id === auth()->user()->id ? 'text-white' : 'text-gray-700' }} grid grid-flow-row gap-2">
+            @endif
+
+            @if ($message->attachments()->exists())
+                @foreach ($message->attachments()->get() as $attachment)
+                    <div class="flex items-center my-1 {{ $message->user->id === auth()->user()->id ? 'flex-row-reverse' : '' }}">
+                        <a class="block w-64 h-64 relative flex flex-shrink-0 max-w-xs lg:max-w-md" href="#">
+                            <img class="absolute shadow-md w-full h-full rounded-l-lg object-cover" src="{{ asset('storage/'. $attachment->link) }}" alt="image"/>
+                        </a>
+                    </div>
+                @endforeach
+            @endif
+
+            @if (!empty($message->content))
+                <div wire:key="{{ $message->id }}" class="flex items-center my-1 {{ $message->user_id === auth()->user()->id ? 'flex-row-reverse' : '' }}">
+                    <p class="{{ $message->user_id === auth()->user()->id ? 'px-6 py-3 rounded-l-full bg-blue-700 max-w-xs lg:max-w-md' : 'px-6 py-3 rounded-r-full bg-gray-800 max-w-xs lg:max-w-md text-gray-200' }}">
                         {{ $message->content }}
                     </p>
                 </div>
-                    @if($loop->last)
-                            </div>
-                        </div>
-                    @endif
-            @empty
-                <p>Поприветствуйте собеседника!:)</p>
-            @endforelse
+            @endif
+
+            @if ($loop->last)
         </div>
-    @else
-        <p>Выберите чат</p>
+    </div>
     @endif
-        @livewire('chat.send-message')
+
+    @php
+        $prevMessageUserId = $message->user_id;
+    @endphp
+
+    @empty
+        <div class="h-screen flex items-center justify-center">
+            <p class="text-center">Поприветствуйте собеседника!!</p>
+        </div>
+        @endforelse
+            </div>
+            @else
+        <div class="h-screen flex items-center justify-center">
+            <p class="text-center">Выберите чат</p>
+        </div>
+    @endif
+    @livewire('chat.send-message')
 </section>
 

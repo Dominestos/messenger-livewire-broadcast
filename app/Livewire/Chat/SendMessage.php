@@ -33,7 +33,12 @@ class SendMessage extends Component
         if ($this->content === '' && $this->images === [])
             return null;
 
-        $this->storeData();
+        $storedMessage = $this->storeMessage();
+
+        $this->dispatch('updateMessageView', $storedMessage->id)->to('chat.chatbox');
+        $this->dispatch('refresh')->to('chat.chatlist');
+
+        $this->reset('images', 'content');
     }
 
     public function render()
@@ -50,12 +55,12 @@ class SendMessage extends Component
         ]);
     }
 
-    protected function storeData()
+    protected function storeMessage()
     {
         try {
             DB::beginTransaction();
 
-            $messageData = Message::create([
+            $newMessage = Message::create([
                 'content' => $this->content,
                 'chat_id' => $this->selectedChat['id'],
                 'user_id' => auth()->user()->id,
@@ -67,17 +72,18 @@ class SendMessage extends Component
 
                     Attachment::create([
                         'link' => $image,
-                        'message_id' => $messageData->id,
+                        'message_id' => $newMessage->id,
                     ]);
                 }
             }
 
-            $this->reset('images', 'content');
             DB::commit();
         } catch (Exception $exception) {
             DB::rollBack();
             abort('500');
         }
+
+        return $newMessage;
 
     }
 }

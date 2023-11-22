@@ -31,7 +31,7 @@
     <div class="contacts p-2 flex-1 overflow-y-scroll">
         @if(count($chats) > 0)
             @foreach($chats as $key => $chat)
-                <div class="flex justify-between items-center p-3 hover:bg-gray-700 rounded-lg relative" wire:click="$dispatch('selectedChat', [ {{ $chat }}, {{ $this->getChatUserInstance($chat, 'id') }} ])">
+                <div wire:key="{{ $chat->id }}" class="flex justify-between items-center p-3 hover:bg-gray-700 rounded-lg relative" wire:click="$dispatch('selectedChat', [ {{ $chat }}, {{ $this->getChatUserInstance($chat, 'id') }} ])">
                     <div class="w-16 h-16 relative flex flex-shrink-0">
                         <img class="shadow-md rounded-full w-full h-full object-cover"
                              src="https://ui-avatars.com/api/?background=random&name={{ $this->getChatUserInstance($chat, 'name') }}"

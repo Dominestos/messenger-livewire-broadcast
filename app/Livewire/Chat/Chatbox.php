@@ -10,7 +10,7 @@ use Livewire\Component;
 class Chatbox extends Component
 {
 
-    protected $listeners = ['loadChat'];
+    protected $listeners = ['loadChat', 'updateMessageView'];
     public $selectedChat;
     public $receiver;
     public $paginateCount = 10;
@@ -29,8 +29,15 @@ class Chatbox extends Component
             ->take($this->paginateCount)
             ->get();
 
-
+        $this->dispatch('chatSelected');
     }
+
+    public function updateMessageView($messageId)
+    {
+        $newMessage = Message::find($messageId);
+        $this->messages->push($newMessage);
+    }
+
     public function render()
     {
         return view('livewire.chat.chatbox');

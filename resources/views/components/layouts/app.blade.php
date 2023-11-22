@@ -23,5 +23,13 @@
         </div>
     </div>
     @livewireScripts
+    <script>
+        window.addEventListener('livewire:initialized', function () {
+            Livewire.on('chatSelected', function () {
+                var chatBody = document.querySelector('.chat-body');
+                chatBody.scrollTop = chatBody.scrollHeight;
+            });
+        });
+    </script>
     </body>
 </html>

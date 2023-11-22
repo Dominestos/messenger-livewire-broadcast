@@ -12,7 +12,7 @@ class Chatlist extends Component
     public $chats;
     public $chatUsers;
     public $receiver;
-    protected $listeners = ['selectedChat'];
+    protected $listeners = ['selectedChat', 'refresh' => 'refresh'];
 
     public function __construct()
     {
