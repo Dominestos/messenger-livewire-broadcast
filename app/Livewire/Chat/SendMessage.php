@@ -2,7 +2,9 @@
 
 namespace App\Livewire\Chat;
 
+use App\Events\MessageSent;
 use App\Models\Attachment;
+use App\Models\Chat;
 use App\Models\Message;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
@@ -15,10 +17,12 @@ class SendMessage extends Component
     use WithFileUploads;
 
     public $selectedChat;
+    public $storedMessage;
     public $content = '';
     public $images = [];
+    public $receiver;
 
-    protected $listeners=['updateSendMessage'];
+    protected $listeners=['updateSendMessage', 'dispatchMessageSent'];
 
     public function updateSendMessage($chat, $receiverId)
     {
@@ -33,12 +37,20 @@ class SendMessage extends Component
         if ($this->content === '' && $this->images === [])
             return null;
 
-        $storedMessage = $this->storeMessage();
+        $this->storedMessage = $this->storeMessage();
 
-        $this->dispatch('updateMessageView', $storedMessage->id)->to('chat.chatbox');
+        $this->dispatch('updateMessageView', $this->storedMessage->id)->to('chat.chatbox');
         $this->dispatch('refresh')->to('chat.chatlist');
 
         $this->reset('images', 'content');
+
+        $this->dispatch('dispatchMessageSent')->self();
+    }
+
+    public function dispatchMessageSent()
+    {
+        $selectedChat = Chat::find($this->selectedChat['id']);
+        broadcast(new MessageSent(auth()->user(), $this->storedMessage, $selectedChat, $this->receiver));
     }
 
     public function render()
