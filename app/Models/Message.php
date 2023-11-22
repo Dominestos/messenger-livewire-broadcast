@@ -14,11 +14,20 @@ class Message extends Model
 
     public function user()
     {
-        return $this->hasOne(User::class, 'user_id', 'id');
+        return $this->belongsTo(User::class, 'user_id', 'id');
     }
 
     public function chat()
     {
         return $this->belongsTo(Chat::class, 'chat_id', 'id');
+    }
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::created(function ($message) {
+            $message->chat->touch();
+        });
     }
 }

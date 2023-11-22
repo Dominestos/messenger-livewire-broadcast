@@ -16,8 +16,10 @@ use Illuminate\Support\Facades\Route;
 Route::view('/', 'welcome');
 
 //livewire routes
-Route::get('/users', \App\Livewire\Chat\CreateChat::class)->name('users');
-Route::get('/chat', \App\Livewire\Chat\Main::class)->name('chat');
+Route::middleware(['auth'])->group(function () {
+    Route::get('/users', \App\Livewire\Chat\CreateChat::class)->name('users');
+    Route::get('/chat', \App\Livewire\Chat\Main::class)->name('chat');
+});
 
 Route::view('dashboard', 'dashboard')
     ->middleware(['auth', 'verified'])

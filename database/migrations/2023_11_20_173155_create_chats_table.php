@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('chats', function (Blueprint $table) {
             $table->id();
-            $table->string('type');
+            $table->string('type')->default('dialogue');
             $table->unsignedBigInteger('user_creator_id');
             $table->timestamps();
 
