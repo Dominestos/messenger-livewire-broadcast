@@ -14,15 +14,33 @@ use Livewire\WithFileUploads;
 
 class SendMessage extends Component
 {
+
     use WithFileUploads;
 
     public $selectedChat;
+
     public $storedMessage;
+
     public $content = '';
+
     public $images = [];
+
     public $receiver;
 
-    protected $listeners=['updateSendMessage', 'dispatchMessageSent'];
+    public function getListeners()
+    {
+        $auth_id = auth()->user()->id;
+        return [
+            "echo-private:chat.{$auth_id},MessageSent" => 'broadcastedMessageReceived',
+            'updateSendMessage',
+            'dispatchMessageSent',
+        ];
+    }
+
+    public function broadcastedMessageReceived($event)
+    {
+        dd($event);
+    }
 
     public function updateSendMessage($chat, $receiverId)
     {
@@ -34,12 +52,14 @@ class SendMessage extends Component
     {
         $validatedData = $this->validatedData();
 
-        if ($this->content === '' && $this->images === [])
+        if ($this->content === '' && $this->images === []) {
             return null;
+        }
 
         $this->storedMessage = $this->storeMessage();
 
-        $this->dispatch('updateMessageView', $this->storedMessage->id)->to('chat.chatbox');
+        $this->dispatch('updateMessageView', $this->storedMessage->id)
+            ->to('chat.chatbox');
         $this->dispatch('refresh')->to('chat.chatlist');
 
         $this->reset('images', 'content');
@@ -50,7 +70,8 @@ class SendMessage extends Component
     public function dispatchMessageSent()
     {
         $selectedChat = Chat::find($this->selectedChat['id']);
-        broadcast(new MessageSent(auth()->user(), $this->storedMessage, $selectedChat, $this->receiver));
+        broadcast(new MessageSent(auth()->user(), $this->storedMessage,
+            $selectedChat, $this->receiver));
     }
 
     public function render()
@@ -96,6 +117,6 @@ class SendMessage extends Component
         }
 
         return $newMessage;
-
     }
+
 }
