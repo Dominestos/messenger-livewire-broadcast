@@ -17,6 +17,7 @@ class SendMessage extends Component
 
     use WithFileUploads;
 
+    protected $listeners = ['updateSendMessage', 'dispatchMessageSent'];
     public $selectedChat;
 
     public $storedMessage;
@@ -26,21 +27,6 @@ class SendMessage extends Component
     public $images = [];
 
     public $receiver;
-
-    public function getListeners()
-    {
-        $auth_id = auth()->user()->id;
-        return [
-            "echo-private:chat.{$auth_id},MessageSent" => 'broadcastedMessageReceived',
-            'updateSendMessage',
-            'dispatchMessageSent',
-        ];
-    }
-
-    public function broadcastedMessageReceived($event)
-    {
-        dd($event);
-    }
 
     public function updateSendMessage($chat, $receiverId)
     {
