@@ -42,5 +42,18 @@ vendor/bin/sail artisan migrate
  vendor/bin/sail npm run dev
 ```
 ... и переходим в браузере по адресу localhost.
-приложение запущено
+приложение запущено.
+
+Также для настройки передачи событий нужно в .env файле заполнить данные переменные нужными значениями
+```
+PUSHER_APP_ID=
+PUSHER_APP_KEY=
+PUSHER_APP_SECRET=
+PUSHER_APP_CLUSTER=
+```
+
+а также установить нужное значение драйвера для BROADCAST_DRIVER.
+
+Для открытия доступа к файлам из публичной директории требуется ввести команду:
+``` vendor/sail/artisan storage:link```
 
