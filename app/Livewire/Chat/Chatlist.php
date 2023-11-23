@@ -12,7 +12,8 @@ class Chatlist extends Component
     public $chats;
     public $chatUsers;
     public $receiver;
-    protected $listeners = ['selectedChat', 'refresh' => 'refresh'];
+    public $searchResult;
+    protected $listeners = ['selectedChat', 'refresh' => 'refresh', 'getSearchResult'];
 
     public function __construct()
     {
@@ -40,6 +41,11 @@ class Chatlist extends Component
         if (isset($prop)) {
             return $this->receiver->$prop;
         }
+    }
+
+    public function getSearchResult($result)
+    {
+        $this->searchResult = $result;
     }
 
     public function mount()
